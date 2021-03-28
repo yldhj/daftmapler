@@ -13,6 +13,8 @@ import {
   PubSubRedemptionMessage,
 } from 'twitch-pubsub-client';
 
+import { events } from './events';
+
 /**
  * Delay execution of the next line with the provided time. Must be awaited
  * @param sec Time in seconds
@@ -22,6 +24,12 @@ function sleep(sec: number): Promise<void> {
     setTimeout(resolve, sec * 1000);
   });
 }
+
+type Redemption = {
+  name: string;
+  username: string;
+  message?: string;
+};
 
 type Token = {
   accessToken: string;
@@ -150,9 +158,10 @@ async function pubSub(): Promise<void> {
     const pubSubClient = new PubSubClient(baseClient);
     const userId = await pubSubClient.registerUserListener(apiClient);
 
-    baseClient.onConnect(() => {
+    const listener = baseClient.onConnect(() => {
       console.log('Pubsub client connected');
     });
+    baseClient.removeListener(listener);
 
     // Pure message. Use pubSubClient event listener
     // baseClient.onMessage((topic: string, message: PubSubMessageData) => {
@@ -164,9 +173,12 @@ async function pubSub(): Promise<void> {
     const handler = await pubSubClient.onRedemption(
       userId,
       (message: PubSubRedemptionMessage) => {
-        console.log(
-          `Redemption: ${JSON.stringify(message)} ${message.rewardName}`
-        );
+        const redemption: Redemption = {
+          name: message.rewardName,
+          username: message.userName,
+          message: message.message,
+        };
+        events.emit('twitchEvent', redemption);
       }
     );
 
@@ -200,4 +212,4 @@ async function pubSub(): Promise<void> {
   }
 }
 
-export { Token, tokenValidation, pubSub };
+export { Redemption, Token, tokenValidation, pubSub };

@@ -1,0 +1,16 @@
+{
+  "sounds": [
+    {
+      "name": "KEKW",
+      "aliases": [],
+      "file": "kekw.ogg",
+      "volume": 0.5
+    }
+  ],
+  "redeemable": {
+    "tts": { "name": "TTS", "volume": 0.7 },
+    "sfx": {
+      "prefix": "Soundboard: "
+    }
+  }
+}
