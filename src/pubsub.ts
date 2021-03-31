@@ -14,6 +14,7 @@ import {
 } from 'twitch-pubsub-client';
 
 import { events } from './events';
+import { Token, isToken } from './validation';
 
 /**
  * Delay execution of the next line with the provided time. Must be awaited
@@ -30,24 +31,6 @@ type Redemption = {
   username: string;
   message?: string;
 };
-
-type Token = {
-  accessToken: string;
-  refreshToken: string;
-  expiryTimestamp: number | null;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function isToken(f: any): f is Token {
-  const access =
-    f.accessToken !== undefined && typeof f.accessToken === 'string';
-  const refresh =
-    f.refreshToken !== undefined && typeof f.refreshToken === 'string';
-  const expiry =
-    f.expiryTimestamp !== undefined &&
-    (f.expiryTimestamp === null || typeof f.expiryTimestamp === 'number');
-  return access && refresh && expiry;
-}
 
 /**
  * Validate if the token file exists with the correct key-value type (does not need to be a valid token)

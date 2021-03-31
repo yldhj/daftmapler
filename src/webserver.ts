@@ -12,6 +12,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import { events } from './events';
 import { Exchange, getAccessToken, validateUser } from './twitchapi';
 import { Redemption, Token } from './pubsub';
+import { isValidSoundConfiguration } from './validation';
 
 dotenv.config();
 
@@ -91,12 +92,12 @@ const soundConfig = JSON.parse(
   )
 );
 
-type SoundConfig = {
-  name: string;
-  aliases: string;
-  file: string;
-  volume: number;
-};
+if (!isValidSoundConfiguration(soundConfig)) {
+  console.log('Invalid sound configuration file');
+  process.exit(1);
+}
+
+console.log('Sound configuration is valid');
 
 events.on('twitchEvent', (redemption: Redemption) => {
   const sfxPrefix: string = soundConfig.redeemable.sfx.prefix || '';
@@ -113,7 +114,7 @@ events.on('twitchEvent', (redemption: Redemption) => {
     });
   }
 
-  const sounds: SoundConfig[] = soundConfig.sounds;
+  const sounds = soundConfig.sounds;
   for (const sound of sounds) {
     const name = `${sfxPrefix}${sound.name}`;
     if (redemption.name === name) {
