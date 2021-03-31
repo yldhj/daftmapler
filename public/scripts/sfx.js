@@ -98,7 +98,7 @@ async function playQueue() {
 
 /**
  * @typedef QueueObject
- * @property {string} location
+ * @property {string | undefined} location
  * @property {number} volume
  * @property {'sfx' | 'tts'} sound
  */
@@ -107,6 +107,7 @@ async function playQueue() {
  * @param {QueueObject} param0
  */
 async function addToQueue({ location, volume, sound }) {
+  if (!location) return;
   if (sound === 'sfx') {
     const item = {
       buffer: await loadSound(location),

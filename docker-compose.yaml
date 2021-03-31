@@ -10,7 +10,7 @@ services:
     restart: unless-stopped
     env_file: .env.docker
     ports:
-      - 9000:8080
+      - 9000:9000
     volumes:
       - ./public:/usr/src/public
       - ./.config:/usr/src/.config

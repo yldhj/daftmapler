@@ -11,8 +11,8 @@ async function pubSubStart() {
   await pubSub();
 }
 
-server.listen(process.env.PORT || 8080, () => {
-  console.log(`listening on *:${process.env.PORT || 8080}`);
+server.listen(process.env.PORT || 9000, () => {
+  console.log(`listening on *:${process.env.PORT || 9000}`);
 });
 
 pubSubStart();

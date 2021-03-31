@@ -16,7 +16,7 @@ import { Redemption, Token } from './pubsub';
 dotenv.config();
 
 const app = express();
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 9000);
 
 const scopes: string[] = [
   // 'bits:read',
