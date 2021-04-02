@@ -171,13 +171,12 @@ async function pubSub(): Promise<void> {
         console.log(
           'PubSub disconnected from error. Reconnecting in 5 seconds'
         );
-        await sleep(5);
-        baseClient.removeListener(onDisconnectListener);
-        return await pubSub();
       } else {
         console.log('PubSub forcefully disconnected ');
-        return;
       }
+      await sleep(5);
+      baseClient.removeListener(onDisconnectListener);
+      return await pubSub();
     };
 
     baseClient.onDisconnect(onDisconnectListener);
