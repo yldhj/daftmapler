@@ -38,11 +38,12 @@ cp tokens.json.example tokens.json
 
 > To register your application on Twitch developer portal, visit [Twitch developer console](https://dev.twitch.tv/console/apps) and register your application. Put OAuth redirect URL according to the base url on `.env` (if you're hosting on local machine, use the given example on the file).
 
-6. Run docker-compose:
+6. (Optional) You can have filtering on your TTS engine by adding file `filter.txt` on `.config` directory. Each line should contain a regex.
+
+7. Run docker-compose:
 
 ```sh
 docker-compose -f docker-compose.yaml up --detach
 ```
 
-7. Your app will be available in http://localhost:9000
-
+8. Your app will be available in http://localhost:9000

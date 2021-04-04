@@ -17,6 +17,11 @@ const audioGain = audioCtx.createGain();
 audioGain.gain.value = 1;
 audioGain.connect(audioCtx.destination);
 
+/**
+ *
+ * @param {string} location
+ * @param {boolean} [dontCache=false]
+ */
 async function loadSound(location, dontCache = false) {
   if (!dontCache) {
     const sound = soundCache.get(location);
@@ -27,6 +32,12 @@ async function loadSound(location, dontCache = false) {
   let audioBuf;
   try {
     const res = await fetch(location);
+
+    if (res.status !== 200) {
+      // Message has been filtered or request to TTS engine returns error code
+      return null;
+    }
+
     const arrayBuf = await res.arrayBuffer();
     audioBuf = await audioCtx.decodeAudioData(arrayBuf);
   } catch {
@@ -45,7 +56,8 @@ function loadSoundNoCache(location) {
 
 function playSound(audio) {
   return new Promise((resolve, reject) => {
-    if (!audio) return resolve();
+    // If audio or audio.buffer is null/empty
+    if (!audio || !audio.buffer) return resolve();
     const source = audioCtx.createBufferSource();
     source.buffer = audio.buffer;
     audioGain.gain.value = audio.volume || 1;

@@ -96,7 +96,7 @@ async function pubSub(): Promise<void> {
       fs.constants.R_OK
     );
   } catch (e) {
-    console.error(`Failed to access tokens file`);
+    console.error('Failed to access tokens file');
     process.exit(1);
   }
 

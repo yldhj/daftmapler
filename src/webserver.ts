@@ -13,6 +13,7 @@ import { events } from './events';
 import { Exchange, getAccessToken, validateUser } from './twitchapi';
 import { Redemption, Token } from './pubsub';
 import { isValidSoundConfiguration } from './validation';
+import { filterHandler } from './filter';
 
 dotenv.config();
 
@@ -99,15 +100,23 @@ if (!isValidSoundConfiguration(soundConfig)) {
 
 console.log('Sound configuration is valid');
 
+const filter: string[] = [];
+
+try {
+  const filterString = fs
+    .readFileSync(path.join(process.cwd(), '.config', 'filter.txt'), 'utf-8')
+    .replace(/(\r\n|\n|\r)/gm, '\n')
+    .split('\n');
+  filterString.forEach((v) => filter.push(v));
+} catch (e) {
+  console.log('No filter file');
+}
+
 events.on('twitchEvent', (redemption: Redemption) => {
   const sfxPrefix: string = soundConfig.redeemable.sfx.prefix || '';
   const ttsName: string = soundConfig.redeemable.tts.name;
 
-  if (
-    redemption.name === ttsName &&
-    redemption.message &&
-    redemption.message.length > 0
-  ) {
+  if (redemption.name === ttsName && redemption.message) {
     io.emit('tts', {
       text: redemption.message,
       volume: soundConfig.redeemable.tts.volume,
@@ -200,12 +209,13 @@ app.get('/oauth2/twitch', async (req, res) => {
 
 if (process.env.TTS_URL) {
   // Act as proxy to the TTS engine
+  // Use filter middleware
   const ttsProxy = createProxyMiddleware({
     target: process.env.TTS_URL,
     changeOrigin: true,
   });
 
-  app.use('/api/tts', ttsProxy);
+  app.use('/api/tts', filterHandler(filter), ttsProxy);
 }
 
 export const server = httpServer;
