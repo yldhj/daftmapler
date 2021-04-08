@@ -38,3 +38,15 @@ export type Token = T.TypeOf<typeof tokenType>;
 export function isToken(v: unknown): v is Token {
   return Either.isRight(tokenType.decode(v));
 }
+
+const redemptionType = T.type({
+  name: T.string,
+  username: T.string,
+  message: T.union([T.string, T.undefined]),
+});
+
+export type Redemption = T.TypeOf<typeof redemptionType>;
+
+export function isRedemption(v: unknown): v is Redemption {
+  return Either.isRight(redemptionType.decode(v));
+}

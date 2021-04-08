@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node build/index.js",
     "build": "tsc",
-    "prettier": "prettier --check \"src/**/*.ts\"",
-    "eslint": "eslint 'src/**/*.ts'"
+    "lint": "eslint 'src/**/*.ts'"
   },
   "author": "DaftMaple",
   "license": "Apache-2.0",
@@ -37,6 +36,7 @@
     "@typescript-eslint/parser": "^4.14.2",
     "eslint": "^7.19.0",
     "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
     "husky": "^4.3.8",
     "lint-staged": "^10.5.4",
     "prettier": "^2.2.1",
@@ -49,8 +49,7 @@
   },
   "lint-staged": {
     "src/**/*.ts": [
-      "npm run prettier",
-      "npm run eslint"
+      "npm run lint"
     ]
   }
 }

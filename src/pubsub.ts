@@ -14,7 +14,7 @@ import {
 } from 'twitch-pubsub-client';
 
 import { events } from './events';
-import { Token, isToken } from './validation';
+import { Token, isToken, Redemption } from './validation';
 
 /**
  * Delay execution of the next line with the provided time. Must be awaited
@@ -25,12 +25,6 @@ function sleep(sec: number): Promise<void> {
     setTimeout(resolve, sec * 1000);
   });
 }
-
-type Redemption = {
-  name: string;
-  username: string;
-  message?: string;
-};
 
 /**
  * Validate if the token file exists with the correct key-value type (does not need to be a valid token)
@@ -120,7 +114,7 @@ async function pubSub(): Promise<void> {
         clientSecret,
         refreshToken: token.refreshToken,
         expiry: token.expiryTimestamp ? new Date(token.expiryTimestamp) : null,
-        onRefresh: (token) => {
+        onRefresh: (token): void => {
           const storedToken: Token = {
             accessToken: token.accessToken,
             refreshToken: token.refreshToken,
@@ -165,7 +159,7 @@ async function pubSub(): Promise<void> {
       }
     );
 
-    const onDisconnectListener = async (isError: boolean) => {
+    const onDisconnectListener = async (isError: boolean): Promise<void> => {
       handler.remove();
       if (isError) {
         console.log(
@@ -194,4 +188,4 @@ async function pubSub(): Promise<void> {
   }
 }
 
-export { Redemption, Token, tokenValidation, pubSub };
+export { Token, tokenValidation, pubSub };

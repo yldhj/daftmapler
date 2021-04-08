@@ -5,7 +5,7 @@ import { tokenValidation, pubSub } from './pubsub';
 
 dotenv.config();
 
-async function pubSubStart() {
+async function pubSubStart(): Promise<void> {
   // Loop while token is not validated yet
   await tokenValidation(3);
   await pubSub();

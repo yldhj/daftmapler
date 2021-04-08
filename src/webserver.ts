@@ -11,13 +11,18 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 
 import { events } from './events';
 import { Exchange, getAccessToken, validateUser } from './twitchapi';
-import { Redemption, Token } from './pubsub';
-import { isValidSoundConfiguration } from './validation';
-import { filterHandler } from './filter';
+import { Token } from './pubsub';
+import {
+  isRedemption,
+  isValidSoundConfiguration,
+  Redemption,
+} from './validation';
+import { filterMiddleware } from './middleware';
 
 dotenv.config();
 
 const app = express();
+app.use(express.json());
 app.set('port', process.env.PORT || 9000);
 
 const scopes: string[] = [
@@ -112,7 +117,7 @@ try {
   console.log('No filter file');
 }
 
-events.on('twitchEvent', (redemption: Redemption) => {
+function redemptionHandler(redemption: Redemption): void {
   const sfxPrefix: string = soundConfig.redeemable.sfx.prefix || '';
   const ttsName: string = soundConfig.redeemable.tts.name;
 
@@ -133,7 +138,9 @@ events.on('twitchEvent', (redemption: Redemption) => {
       });
     }
   }
-});
+}
+
+events.on('twitchEvent', redemptionHandler);
 
 // Use request sessionID as state
 app.get('/api/verify', async (req, res) => {
@@ -215,7 +222,23 @@ if (process.env.TTS_URL) {
     changeOrigin: true,
   });
 
-  app.use('/api/tts', filterHandler(filter), ttsProxy);
+  app.use('/api/tts', filterMiddleware(filter), ttsProxy);
+}
+
+if (process.env.TEST_MODE) {
+  app.post('/test/sfx', async (req, res) => {
+    try {
+      const body = req.body;
+      if (isRedemption(body)) {
+        redemptionHandler(body);
+        res.status(200).send('OK');
+      } else {
+        res.status(422).send('Invalid body structure');
+      }
+    } catch (e) {
+      res.status(415).send('Unsupported media type');
+    }
+  });
 }
 
 export const server = httpServer;

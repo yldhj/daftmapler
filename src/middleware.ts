@@ -1,10 +1,10 @@
 import { RequestHandler } from 'express';
 
 /**
- * RequestHandler that acts as a filter to filter messages
+ * Filter middleware that acts as a filter to filter messages
  */
-function filterHandler(filterArray: string[]): RequestHandler {
-  return (req, res, next) => {
+function filterMiddleware(filterArray: string[]): RequestHandler {
+  return (req, res, next): void => {
     let filtered: boolean = false;
 
     const message = req.query.text;
@@ -51,4 +51,4 @@ function filterHandler(filterArray: string[]): RequestHandler {
   };
 }
 
-export { filterHandler };
+export { filterMiddleware };
