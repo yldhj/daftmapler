@@ -158,22 +158,6 @@ async function pubSub(): Promise<void> {
         events.emit('twitchEvent', redemption);
       }
     );
-
-    const onDisconnectListener = async (isError: boolean): Promise<void> => {
-      handler.remove();
-      if (isError) {
-        console.log(
-          'PubSub disconnected from error. Reconnecting in 5 seconds'
-        );
-      } else {
-        console.log('PubSub forcefully disconnected ');
-      }
-      await sleep(5);
-      baseClient.removeListener(onDisconnectListener);
-      return await pubSub();
-    };
-
-    baseClient.onDisconnect(onDisconnectListener);
   } catch (e) {
     console.error('error: ', e);
 

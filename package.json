@@ -1,10 +1,10 @@
 {
   "name": "channel-points-soundboard-v2",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "start": "node build/index.js",
+    "start": "node build/index.js --trace-warnings",
     "build": "tsc",
     "lint": "eslint 'src/**/*.ts'"
   },
